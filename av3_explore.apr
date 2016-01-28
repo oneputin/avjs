@@ -1,0 +1,968 @@
+/3.2
+(ODB.1
+	Dependencies:	"$USEREXT/gia_sedit.avx\n"
+	FirstRootClassName:	"Project"
+	Roots:	2
+	Version:	32
+)
+
+(Project.2
+	Name:	"av3_explore.apr"
+	CreationDate:	"Freitag, 12. Dezember 2008 16:00:47"
+	GUIName:	"Project"
+	Win:	3
+	CSMgr:	4
+	DocExts:	5
+	VisGUIWidth:	70
+	Doc:	6
+	Doc:	11
+	Doc:	15
+	Doc:	20
+	Doc:	24
+	Doc:	28
+	Doc:	33
+	Doc:	37
+	Doc:	41
+	Doc:	45
+	Doc:	49
+	Doc:	54
+	Doc:	58
+	Doc:	62
+	ActiveDoc:	20
+	Buttons:	66
+	Buttons:	67
+	Buttons:	68
+	Dependencies:	69
+	Scripts:	70
+	Prefs:	71
+	GUI:	849
+	WorkDir:	945
+	WinX:	93
+	WinY:	48
+	WinW:	1818
+	WinH:	1105
+	SerialNumber:	"825911104042"
+	GUINames:	946
+	GUINames:	947
+	GUINames:	948
+	GUINames:	949
+	GUINames:	950
+	GUINames:	951
+	GUINames:	952
+	TocWidthScale:	1.00000000000000
+)
+
+(DocWin.3
+	Owner:	2
+	Open:	1
+	X:	4
+	Y:	3
+	W:	368
+	H:	460
+)
+
+(CSMgr.4
+)
+
+(DocAct.5
+	Doc:	2
+)
+
+(SEd.6
+	Name:	"AV3.DicToJsonfile"
+	CreationDate:	"Mittwoch, 20. Januar 2016 10:01:51"
+	GUIName:	"Script"
+	Win:	7
+	CSMgr:	8
+	DocExts:	9
+	ObjectTag:	10
+	Source:	"' Name: AV3.DicToJsonfile     : Mon Jan 25 10:11:55 2016 : av3_explore.apr\n' Translate an AV3-Dic representing an ODB-document (apr, avx, )  \n' into jsonFile\n\n  ' To create a \"valid\" JSONFILE \n  ' *** for all write-cycles \n  ' terminate all \"inner\" items with trailing\",\" \n  ' terminate \"last\" item of a collection(dic or table) without \",\" \n\n  if (self.is(list)) then \n    _self = self\n    ' return nil\n  end  \n  \n  odbDic = _self.get(0)  ' av.run(\"L\",{odbDic, \"sorted\", TRUE }) return true\n  srcFN  = _self.get
+(1)\n\n\n  jsonFN = srcFN.clone\n  jsonFn.setExtension(\"json\")\n\n  jsonFile = LineFile.Make(jsonFN,#FILE_PERM_WRITE)\n\n  jsonFile.WriteElt(\"{\") \n  \n \n  odbKeys = odbDic.returnKeys  ' av.run(\"L\",{odbKeys, \"sorted\", TRUE })\n\n  odbKeys.sort(true)\n  odbKeyCount = odbKeys.count\n  \n  ' for each key in odbKeys\n  for each i in 0..(odbKeyCount-1)  \n    \n    key = odbKeys.get(i)\n\n    jsonFile.WriteElt(key.quote + \": {\") \n\n    odbColl = odbDic.get(key)\n   \n    ids = odbColl.returnKeys\n    ids.sort(true)\n    idCount = ids.co
+unt\n\n    for each j in 0..(idCount-1)  \n\n      id = ids.get(j)    ' for each id in ids\n    \n      jsonFile.WriteElt(id.asstring.quote + \": {\")\n     \n      odbObj = odbColl.get(id)\n\n      props = odbObj.returnKeys\n      props.sort(true)\n      propCount = props.count\n      \n      if (propCount > 0) then         \n      \n        for each k in 0..(propCount-1)   ' for each prop in props\n         \n          prop = props.get(k) \n          \n          content = odbObj.get(prop)\n          if (prop.indexOf(\"style\") >=
+ 0) then \n            t = content\n          end     \n          if (content.is(list)) then \n    \n            if (content.count>0) then \n\n              jsonFile.WriteElt(prop.trim.quote + \": [\")\n            \n              content.sort(true)\n              jsline = \"\"  \n              for each c in content\n                if (jsline.count > 0)then jsonFile.WriteElt(jsLine + \",\") end\n                jsline = c.asstring \n              end\n              if (jsline.count>0) then jsonFile.WriteElt(jsLine) end\n\n      
+        psline = \"]\"  ' jsonFile.WriteElt(\"]\" + \",\")\n            end\n          \n          elseif (content.is(Number)) then \n            psline = prop.trim.quote + \":\" + content.asstring.trim \n            \n          else\n            psline = prop.trim.quote + \":\" + content.asstring.trim \n          end\n\n          if (k < (propCount-1)) then  psline = psline + \",\"  end\n\n          jsonFile.WriteElt(psline)\n\n        end\n      end\n    \n      if (j < (idCount-1)) then closeline = \"}\" + \",\"\n      else              
+        closeline = \"}\"   end  \n      jsonFile.WriteElt(closeline)\n\n    end  \n    \n    if (i < (odbKeyCount-1)) then closeline = \"}\" + \",\"\n    else                          closeline = \"}\"   end  \n    \n    jsonFile.WriteElt(closeline)\n\n  end  \n  \n  jsonFile.WriteElt(\"}\")\n  \n      \n  jsonFile.close\n  \n  \n     \n\n\n\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.7
+	Owner:	6
+	X:	260
+	Y:	2
+	W:	949
+	H:	965
+)
+
+(CSMgr.8
+)
+
+(DocAct.9
+	Doc:	6
+)
+
+(Nil.10
+)
+
+(SEd.11
+	Name:	"AV3.GetOdbNames"
+	CreationDate:	"Mittwoch, 20. Januar 2016 12:26:01"
+	GUIName:	"Script"
+	Win:	12
+	CSMgr:	13
+	DocExts:	14
+	ObjectTag:	10
+	Source:	"' Name: AV3.GetOdbNames     : Mon Jan 25 10:32:12 2016 : av3_explore.apr\n' \"Very formal\" extraction of all obj-keys within an apr-odb-doc (apr or avx or )\n\nodbKeys = {}\n\nif (self.is(list)) then \n  _self = self\n  standalone=false\nelse\n  \n  standalone=true\nend   \n\nodbFileName = _self.get(0)\n\nkeyfileFN = odbFileName.returnDir\n\nkeyfileFN.mergeFile(\"log/odbnames.json\")\n\nif (File.Exists(keyfileFN)) then \n\n  keyFile = LineFile.Make(keyfileFN,#FILE_PERM_READ)\n  if (keyFile = NIL) then return nil end\n   \n  for each 
+i in 0..(keyFile.getSize - 1)  \n\n    keyLine = keyFile.ReadElt.Trim\n\n    lTokens = keyLine.asTokens(\":\")\n\n    odbKeys.add(lTokens.get(1).trim)\n\n  end\n  \n  if (standalone) then av.run(\"L\",{odbKeys, \"sorted\", TRUE }) end\nend\n\nreturn odbKeys\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.12
+	Owner:	11
+	X:	526
+	Y:	43
+	W:	819
+	H:	628
+)
+
+(CSMgr.13
+)
+
+(DocAct.14
+	Doc:	11
+)
+
+(SEd.15
+	Name:	"AV3.JsonfileToDic"
+	CreationDate:	"Mittwoch, 20. Januar 2016 14:36:27"
+	GUIName:	"Script"
+	Win:	16
+	CSMgr:	17
+	DocExts:	18
+	ObjectTag:	19
+	Source:	"' Name: AV3.JsonfileToDic     : Wed Jan 20 14:37:27 2016 : explode.apr\n\njsonDic = dictionary.make(3)\n\nif (self.is(list)) then  \n  odbFileName = self.get(0)\nelse\n  FileList = FileDialog.ReturnFiles({\"*.json\"},{\"AV3Json(*.json)\"},\"Transform JSON to ODB\" ,0)\n  odbFileName = fileList.get(0)\nend\n\n' checkKeys = av.run(\"AV3.GetOdbNames\", {odbFileName})\n\n' \nodbFile = LineFile.Make(odbFilename,#FILE_PERM_READ)\nodbLineCount = odbFile.GetSize    \n\n\nfor each i in 0..(odbLineCount - 1)  \n\nend\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.16
+	Owner:	15
+	X:	73
+	Y:	189
+	W:	876
+	H:	508
+)
+
+(CSMgr.17
+)
+
+(DocAct.18
+	Doc:	15
+)
+
+(Nil.19
+)
+
+(SEd.20
+	Name:	"AV3.ODBToJson"
+	CreationDate:	"Mittwoch, 20. Januar 2016 09:09:05"
+	GUIName:	"Script"
+	Win:	21
+	CSMgr:	22
+	DocExts:	23
+	ObjectTag:	10
+	Source:	"' Name: AV3.ODBToJson     : Mon Jan 25 10:51:14 2016 : av3_explore.apr\n' \njsonDic = dictionary.make(3)\n\nif (self.is(list)) then  \n  odbFileName = self.get(0)\nelse\n  FileList = FileDialog.ReturnFiles({\"*.avx\",\"*.apr\"},{\"Extension (*.avx)\", \"Project (*.apr)\"},\"Transform ODB to JSON\",0)\n  odbFileName = fileList.get(0)\nend\n\ncheckKeys = av.run(\"AV3.GetOdbNames\", {odbFileName})\n\n' \nodbFile = LineFile.Make(odbFilename,#FILE_PERM_READ)\nodbLineCount = odbFile.GetSize    \n\nscriptPropName = \"Source\"\nisScriptProp   = f
+alse\npropContent = \"\"\npropKey = NIL \nodbObj  = NIL \n\npropKeys = {}\n\nfor each i in 0..(odbLineCount - 1)  \n    \n  odbLine = odbFile.ReadElt ' .Trim\n \n  if (odbLine.trim.count=0) then continue  end\n  \n  c1 = odbline.left(1)\n   \n  if (c1=\"(\" ) then        ' OBJECT-START\n\n    if (isScriptProp and (odbObj<>NIL)) then ' *** Ausnahme: line in script-texten\n      propContent = propContent + odbLine\n      odbObj.set(propKey, propContent)\n      continue\n    end\n    \n    keys = odbline.middle(1,100).asTokens(\".\")\n\n   
+ odbName = keys.get(0)\n    odbId   = keys.get(1).trim\n    if (odbId.isNumber) then \n      odbId = odbId.asNumber\n    end\n    \n    odbDic  = jsonDic.get(odbName) \n    if (odbDic = nil) then \n      odbDic = dictionary.make(3)\n      jsonDic.add(odbName, odbDic)\n    end\n    \n    odbObj = dictionary.make(3)\n    \n  elseif (c1=\")\") then     ' OBJECT-END \n    \n    if (odbLine.trim.count=1) then  \n      odbDic.set(odbId, odbObj)  \n      propKey = \"\"\n      isScriptProp = false\n    \n    elseif (isScriptProp and (odbOb
+j<>NIL)) then ' *** Ausnahme: line in script-texten\n      propContent = propContent + odbLine\n      odbObj.set(propKey, propContent)\n      continue\n    end\n      \n  elseif (c1=\"/\") then     ' SKIP FIRST LINE \n\n    if (isScriptProp and (odbObj<>NIL)) then ' *** Ausnahme: line in script-texten\n      propContent = propContent + odbLine\n      odbObj.set(propKey, propContent)\n      continue\n    end\n\n    continue  \n\n  else                   ' NORMAL object-content-line\n   \n    lTokens = odbLine.asTokens(\":\")\n    
+\n    if (lTokens.count > 1) then  \n\n      checkKey = lTokens.get(0)   ' propKeys.add(propKey)\n      \n      if (checkKeys.FindByValue(checkKey.trim) < 0) then     ' if (isScriptProp) then \n        \n        propContent = propContent + odbLine\n        odbObj.set(propKey, propContent)\n      \n      else\n        \n        propKey = checkKey.trim\n       '*********************** \n        isScriptProp = (propKey = scriptPropName)\n        \n        isBitmapProp = (propKey = \"Bits\")\n        \n        propContent  = odbLi
+ne.middle(propKey.count+2, odbLine.count)  \n       '                              *************** \n        if (propContent.trim.isNumber) then\n          p = propContent.trim \n          numFlag = (p.indexOf(\"x\")<0)and(p.indexOf(\" \")<0)\n          if (numFlag) then      ' sonderfall-1\n            propContent = p ' .asNumber\n          else\n            propContent = p.quote     ' msgbox.info(propContent,propKey)  \n          end\n        end   \n        \n        if (isBitmapProp) then \n          propContent = propC
+ontent.trim.quote\n        end \n        \n        isContent = odbObj.get(propKey)\n\n        if (isContent=NIL) then \n        \n          odbObj.set(propKey, propContent)\n          \n        elseif (isContent.is(list)) then \n        \n          isContent.add(propContent)\n         '*************************  \n          odbObj.set(propKey, isContent)\n       \n        else\n          isContent = {isContent, propContent}\n          odbObj.set(propKey, isContent)\n        end\n\n      end\n      \n    else \n   \n      propConte
+nt = propContent + odbLine\n      \n      odbObj.set(propKey, propContent)\n\n    end\n     \n  end \n	       \nend\n\n' av.run(\"L\",{jsonDic,  \"sorted\", TRUE })\n' av.run(\"L\",{propKeys, \"sorted\", TRUE })\n\nav.run(\"AV3.DicToJsonfile\", {jsonDic, odbFilename})\n' * * * * * * * * * * * * \n\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.21
+	Owner:	20
+	Open:	1
+	X:	346
+	Y:	11
+	W:	865
+	H:	906
+)
+
+(CSMgr.22
+)
+
+(DocAct.23
+	Doc:	20
+)
+
+(SEd.24
+	Name:	"ODB.Explore"
+	CreationDate:	"Freitag, 12. Dezember 2008 16:00:51"
+	GUIName:	"Script"
+	Win:	25
+	CSMgr:	26
+	DocExts:	27
+	ObjectTag:	10
+	Source:	"' Name: ODB.Explore     : Mon Jan 25 10:48:42 2016 : av3_explore.apr\n' Derived from \n\n' odb.extract.script author: Isaac Oshima, ioshima@maphost.dfg.ca.gov; 199907.12\n' ==========================\n\n' odb.extract.script usage note:\n' ==============================\n' Avenue code can be extracted from .apr's and .avx's (Projects and Extensions) \n' using the California Department of Fish and Game / Information Technology Branch's\n' 'odb.extract.script' utility.  This utility is meant to encourage the sharing of 
+code and\n' knowledge.  Please, do not extract and use code without due credit to the author(s) and\n' please, do not extract or utilize copyrighted code without the consent of the author(s).\n\n' Author: Isaac Oshima\n' California Department of Fish and Game, Information Technology Branch\n' July 12, 1999\n' ioshima@maphost.dfg.ca.gov\n' 916-323-1635\n\n\ntheProject = av.GetProject\n\n' Prompt user to find the apr or avx that he/she wishes to extract script(s).\n\nFileList = FileDialog.ReturnFiles({\"*.avx\",\"*.apr\"},{\"Ext
+ension (*.avx)\", \"Project (*.apr)\"},\"Search ODB for Scripts\",0)\n\n' If user cancelled\nif (FileList.Count = 0) then\n    System.Beep\n    Return Nil\nend\n\n\n' Cycle through odb-files \n' ( selected from same container-folder) \n\nlogList = {}\n    \nfor each odbFilename in FileList\n\n    sedIdents  = dictionary.make(3)\n\n    odbName = odbFilename.getBaseName\n    \n    ' 1. Export all scripts into document-related log-folder \n\n    folderFileName = odbFilename.returnDir\n    folderFileName.mergeFile(\"ave\")\n\n    sedColl = av
+.run(\"ODB.getListSed\",{odbFileName})\n\n    if (sedColl.count>0) then\n\n        sedKeys = sedColl.returnKeys \n        sedKeys.sort(true)\n\n        sedFNset= {}\n        'keyList = sedKeys\n        keyList = Msgbox.MultiListAsString(sedKeys,\"Select Script(s) to Extract\",\"Script Extractor\")\n\n        if (keyList.is(list)) then  \n\n            for each sedKey in keyList\n\n                if (sedKey.left(3)=\"xxx\") then continue end\n\n                startLine = sedColl.get(sedKey)\n\n                sedIdent = av.run(\"SEDf
+ile.create\",{odbFileName, sedKey, startLine, folderFileName})    \n                ' -------------------------------\n                if (sedIdent=NIL) then\n                  msgbox.info(\"broken SED-saving:\" + sedKey, \"ALERT\")\n                  break ' return NIL  \n                end \n                       \n                sedIdents.set(sedIdent.get(\"name\"), sedIdent)\n\n            end\n        end    \n    end\n\n    ' 2. Collect Extensions (dependencies)\n    \n    depList = av.run(\"ODB.getListExt\",{odbFileName}
+)\n    ' ------------------------------\n    if (depList.count>0) then \n        depIdent = Msgbox.ListAsString(depList,\"Select an extension to View\",\"Script Extractor\")\n    end\n\n    ' 3. Create a logFile (in logFolder)\n\n    logFolder = av.run(\"ODB.logCreate\", {odbName, sedIdents, depList, folderFileName})\n    ' -------------------------\n    if (logFolder <> NIL) then\n      logList.add(odbName)\n    end \n\nend\n\n\n' PostProcessing (optional)    \n \nif (logList.count > 0) then  \n  logDir = Msgbox.ListAsString(logLis
+t,\"Select a logged directory!\",\"Script Extractor\")\nend\n\n\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.25
+	Owner:	24
+	X:	471
+	Y:	1
+	W:	959
+	H:	964
+)
+
+(CSMgr.26
+)
+
+(DocAct.27
+	Doc:	24
+)
+
+(SEd.28
+	Name:	"ODB.getListExt"
+	CreationDate:	"Montag, 18. Januar 2016 13:09:09"
+	GUIName:	"Script"
+	Win:	29
+	CSMgr:	30
+	DocExts:	31
+	ObjectTag:	32
+	Source:	"' Name: SED.getListExt     : Mon Jan 25 09:12:35 2016 : av3_explore.apr\n' get list of extensions as (vereinbart) in the apr\n' from first ODB.1-object of every apr (string-analysis) \n\n  extNames = {}  ' \n\n  odbFileName = self.get(0)\n\n  qString     = \"Dependencies\"\n  qStringLen  = qString.count\n  \n  odbFile = LineFile.Make(odbFilename,#FILE_PERM_READ)\n\n  lineCount = odbFile.GetSize    \n\n  nxtname = FALSE\n  nxtdate = FALSE \n  qt = (34).asChar ' 34 = ascii(\") \n\n	 for each i in 0..(lineCount - 1)\n	    \n	    inLi
+ne = odbFile.ReadElt.Trim  \n	       \n	    if (inLine.Trim.Left(qStringLen) = qString) then  \n	      \n       extNamesString = inLine.Trim.asTokens(qt).Get(1).substitute(\"\\n\",\"\\\") \n       \n       extNames = extNamesString.asTokens(\"\\\") \n       \n       BREAK\n	    end    \n	 end\n\n		odbFile.Close\n\nreturn extNames\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.29
+	Owner:	28
+	X:	231
+	W:	890
+	H:	734
+)
+
+(CSMgr.30
+)
+
+(DocAct.31
+	Doc:	28
+)
+
+(Nil.32
+)
+
+(SEd.33
+	Name:	"ODB.getListSed"
+	CreationDate:	"Montag, 18. Januar 2016 12:40:15"
+	GUIName:	"Script"
+	Win:	34
+	CSMgr:	35
+	DocExts:	36
+	ObjectTag:	32
+	Source:	"' Name: SED.getListSed     : Mon Jan 25 09:27:49 2016 : av3_explore.apr\n' read thru the odbFile and retrieve all the\n' \"Script.\"(\"SEd.\") object names \n' and their positions in the odb (of extension or apr).\n\nscriptColl = Dictionary.make(3)\nif (self.is(list)) then \n  odbFileName = self.get(0)\n  standalone = false\nelse\n  odbFileName = FileDialog.Show (\"*.a*\", \"any av3-docs\", \"select one\")\n  standalone = true\nend\nif (odbFileName.is(filename).not) then  return false  end \n\nscriptColl = Dictionary.make(3)\n\nodbFi
+le = LineFile.Make(odbFilename,#FILE_PERM_READ)\naprLineCount = odbFile.GetSize    \n\nodbFileExt = odbFilename.getExtension  \nif (odbFileExt = \"avx\") then\n    objIdent = \"(Script.\"\nelse \n    objIdent = \"(SEd.\"\nend  \nobjIdentLen = objIdent.count\n\nnxtname = FALSE\nnxtdate = FALSE\n\nqt = (34).asChar ' 34 = ascii(\") ' qt = \":\"\n\nfor each i in 0..(aprLineCount - 1)\n    \n    inLine = odbFile.ReadElt.Trim  \n       \n    if (inLine.Left(objIdentLen) = objIdent) then  \n      nxtName = TRUE\n   outLine = \"\" \n   iStart = i.a
+sString.Trim\n    end\n  \n    if (nxtName = TRUE) then\n      if (inLine.Trim.Left(5) = \"Name:\") then  \n        SedName = (inLine.Trim.asTokens(qt).Get(1))  ' .Trim.Substitute(qt,\"\")        \n     outLine = SedName ' + \":\" + i.asString.Trim)  \n     if (objIdent=\"(Script.\") then  	 \n       scriptColl.set(outLine, iStart)\n     else\n       nxtdate = TRUE 	 \n     end  \n        nxtname = FALSE\n   end\n    end    \n\n    if (nxtdate = TRUE) then\n      if (inLine.Trim.Left(13) = \"CreationDate:\") then  \n        CreaDate =
+ (inLine.Trim.asTokens(qt).Get(1)) ' .Trim.Substitute(qt,\"\")        \n        outLine = outLine + \":\" + CreaDate.quote\n        scriptColl.set(outLine, iStart) \n\n        nxtdate = FALSE\n     outLine = \"\" \n      end\n    end \nend\n\nodbFile.Close\n\n' if no script objects were found\nif (scriptColl.Count = 0) then\n    MsgBox.Error(\"No scripts contained within:\" ++ odbFileName.asstring,\"Aborting\")\n    Return Nil\nend\nif (standalone) then av.run(\"L\", {scriptColl}) end\n\nreturn scriptColl\n\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.34
+	Owner:	33
+	Open:	1
+	X:	444
+	Y:	5
+	W:	844
+	H:	899
+)
+
+(CSMgr.35
+)
+
+(DocAct.36
+	Doc:	33
+)
+
+(SEd.37
+	Name:	"ODB.logCreate"
+	CreationDate:	"Dienstag, 19. Januar 2016 12:39:07"
+	GUIName:	"Script"
+	Win:	38
+	CSMgr:	39
+	DocExts:	40
+	ObjectTag:	32
+	Source:	"' Name: ODB.logCreate     : Mon Jan 25 09:50:15 2016 : av3_explore.apr\n' Create a \n\n  SedName  = \"\"\n  avxFNset = {}\n  saveDir  = NIL\n  version  = \"0.0.1\"\n  description = \"extracted out of av3-document\"\n  \n  if (self.is(list)) then \n    _sedsave = self.clone\n    ' return NIL \n  end\n\n' Evaluate parameters \n    \n  sedName   = _sedsave.get(0)\n  sedIdents = _sedsave.get(1)\n  if (_sedsave.count > 2) then  avxFNset = _sedsave.get(2) end\n  if (_sedsave.count > 3) then  saveDir = _sedsave.get(3) end\n  \n  if (saveDir
+=NIL) then  \n  ' saveDir = sedFNset.get(0).returnDir\n  end\n\n\n  logFN = saveDir.clone\n  logFN.mergeFile(sedName)\n  ' logFN = saveDir.clone\n  logFN.mergeFile(\"av3.json\")\n  \n  logFile = LineFile.Make(logFN,#FILE_PERM_WRITE)\n  \n  logFile.WriteElt(\"{ \")\n\n' 1. Collect Stammdaten into LOG\n  \n  logFile.WriteElt(\"name\".quote        + \":\" + sedName.quote + \",\")\n  logFile.WriteElt(\"version\".quote     + \":\" + version.quote + \",\")\n  logFile.WriteElt(\"description\".quote + \":\" + description.quote + \",\")\n  \n' 2. Collect Sc
+ript-Names into LOG\n\n  logFile.WriteElt(\"scripts\".quote+ \": {\")\n  logLine = NIL\n  sedNames = sedIdents.returnKeys\n  for each sedN in sedNames\n    if (logLine<>NIL) then  \n      logFile.WriteElt(logLine + \",\")  \n    end\n    \n    sedIdent = sedIdents.get(sedN)\n    sedKey   = sedIdent.get(\"name\")\n    if (sedKey=NIL) then sedKey = sedN end\n    logLine = sedKey.asstring.substitute(\"\\\",\"/\").quote + \":\" + sedIdent.get(\"date\").quote ' *** UNIFY path-slash as \"/\"\n  end \n  if (logLine<>NIL) then logFile.WriteElt(logL
+ine) end\n  logFile.WriteElt(\"},\")\n\n\n' 3. Collect Dependencies into LOG  \n\n  logFile.WriteElt(\"dependencies\".quote + \": [\")\n  logLine = NIL\n  for each avxFN in avxFNset\n    if (logLine<>NIL) then  logFile.WriteElt(logLine + \",\")  end\n    logLine = avxFN.asstring.substitute(\"\\\",\"/\").quote \n  end \n  if (logLine<>NIL) then logFile.WriteElt(logLine) end\n  logFile.WriteElt(\"]\")\n\n\n' 4. Finalize\n  logFile.WriteElt(\"}\")\n  \n  logFile.close  \n  \nreturn saveDir\n\n\n  \n  \n\n  \n    \n\n  "
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.38
+	Owner:	37
+	X:	342
+	W:	840
+	H:	981
+)
+
+(CSMgr.39
+)
+
+(DocAct.40
+	Doc:	37
+)
+
+(SEd.41
+	Name:	"Ordner.Create"
+	CreationDate:	"Mittwoch, 20. Januar 2016 08:51:12"
+	GUIName:	"Script"
+	Win:	42
+	CSMgr:	43
+	DocExts:	44
+	Source:	"' Name: Ordner.Create     : Wed Jun 01 12:20:36 2011 : gia_ordner.apr\n' Erzeugt neues System-Verzeichnis (, wenn ???)\n  \n' Input:  kompletter Verzeichnisname als String\n'         Ordnername wurde manuell eingegeben = TRUE\n'         somit wird abgefragt, ob neuer Ordner angelegt werden soll\n'         sonst                               = FALSE\n      \n' Output: True oder False\n\nmanuell = false\n\n\nif (self.is(list)) then\n  strDir = self.get(0)\n '******************** \n  if (self.count>1) then manuell=self.get(1)
+ end\n  \nelse\n  strDir = av.getProject.GetFileName.returnDir \n  'MsgBox.Error(\"es wurden keine Parameter übergeben\",\"Script:  Create.Ordner\")\n  'Return False\nend\n\n     \nif (strDir.Is (FileName)) then\n  strDir = strDir.getFullname ' asstring\n 'MsgBox.Error(\"erstes Argument erwartet eine String-Wert \",\"Ordner.Create\")\n 'return False\nend   \n\nif (manuell.Is (Boolean).NOT) then\n  manuell = false\n  'MsgBox.Error(\"zweite Argument erwartet eine Boolean-Wert \",\"Ordner.Create\")\n  'return False\nend   \n\n' --------------
+-----------------------------------------\n' ??? Es soll keine Leerzeichen geben in VerzeichnisNamen,\n' ??? die später als URLs verwendet werden !!\n' strDir = strDir.Substitute(\" \",\"_\")\n' -------------------------------------------------------\n\n\nstrSecAtt = \"\"\n\ndllName = FileName.FindInSystemSearchPath(\"kernel32.dll\")\nif (dllName = NIL) then\n  MsgBox.Error(\"der Aufruf von 'kernel32.dll' ist fehl geschlagen\",\"Fehler\")\n  Return False\nend\n\ndllKernel = DLL.Make(dllName)\n\nMkDir     = DLLProc.Make(dllKernel,\"Creat
+eDirectoryA\",#DLLPROC_TYPE_INT32,{#DLLPROC_TYPE_STR,#DLLPROC_TYPE_VOID})\n\nCopyFile  = DLLProc.Make(dllKernel,\"CopyFileA\",#DLLPROC_TYPE_INT32,{#DLLPROC_TYPE_STR,#DLLPROC_TYPE_STR,#DLLPROC_TYPE_VOID})\n\n\n'Declare Function CopyFileA Lib \"kernel32.dll\" ( _\n'                 ByVal lpExistingFileName As String, _\n'                 ByVal lpNewFileName As String, _\n'                 ByVal bFailIfExists As Long) As Long\n\n\n                    \nstrDir  = strDir.Substitute(\"/\",\"\\\")\nlistDir = strDir.AsTokens(\"\\\")\n\nstrOrd
+ = listDir.Get(0)\nif (strOrd.AsFileName.IsDir.Not) then\n\n   MsgBox.Error (\"Das Laufwerk [\"+ strOrd + \"]  für den neuen Ordner [\" +strDir +\"] \"+ \n                 \" konnte nicht gefunden werden\", \"Ordner.Create\") \n   return nil\nend     \n                \nresult=0\n\nfor each i in 1..(listDir.Count - 1)\n\n  strVerz = strOrd\n  strOrd  = strOrd+\"\\\"+listDir.Get(i)\n  if (strOrd.AsFileName.IsDir.Not) then\n\n    if (manuell) then \n      if (MsgBox.YesNo (\"Soll der Ordner \" + \"\"\"\" + listDir.Get(i) + \"\"\"\" + \" in das Verze
+ichnis \"\n                        + nl + \"\"\"\" + strVerz + \"\"\"\" + nl + \" angelegt werden\",\n                      \"Ordner.Create\", true).not) then \n        return false \n      else \n        manuell = false\n      end\n    end\n\n    result = MkDir.Call({strOrd,strSecAtt})\n  ' \n  else\n    result = 1\n  end\nend\n\nif (result = 1) then\n  Return true\nelse\n  Return False\nend\n\n"
+)
+
+(DocWin.42
+	Owner:	41
+	X:	372
+	Y:	95
+	W:	750
+	H:	707
+)
+
+(CSMgr.43
+)
+
+(DocAct.44
+	Doc:	41
+)
+
+(SEd.45
+	Name:	"SEDfile.create"
+	CreationDate:	"Montag, 18. Januar 2016 12:44:26"
+	GUIName:	"Script"
+	Win:	46
+	CSMgr:	47
+	DocExts:	48
+	ObjectTag:	10
+	Source:	"' Name: SEDfile.create     : Mon Jan 25 10:44:55 2016 : av3_explore.apr\n'   \n  sedIdent = dictionary.make(3)\n  sedIdent.set(\"date\",\"nn\")\n  \n  \n  saveDir = NIL\n  qt = (34).asChar  ' char (\")\n\n  skipKeys = {\"GUIName\",\"Win\", \"CSMgr\", \"DocExts\", \"SearchStr\", \"FontSize\"} ' \"CreationDate\",\n\n  if (self.is(list)) then \n    _sedsave = self.clone\n    ' return NIL \n  end\n\n' Evaluate parameters \n    \n  odbFileName     = _sedsave.get(0)\n  scriptString    = _sedsave.get(1)\n  scriptPosition  = _sedsave.get(2)\n  if (_sedsa
+ve.count>3) then saveDir = _sedsave.get(3) end  \n\n  \n  odbFile   = LineFile.Make(odbFilename,#FILE_PERM_READ)\n  lineCount = odbFile.GetSize    \n  odbName   = odbFilename.getBaseName\n  odbExt    = odbFilename.getExtension  \n\n  ' get the script name, position in the avx and init the output script name\n\n  scriptIdent = scriptString.Trim.asTokens(\":\")\n  scriptName  = scriptIdent.Get(0).Trim\n  scriptFile  = scriptName + \".ave\"   \n  \n  if (scriptIdent.count>1) then \n    scriptDate = scriptIdent.Get(1).Trim\n  end 
+   \n\n  if (saveDir=NIL) then     \n   ' ask user if he/she would like to add the script to the current project\n    answer = Msgbox.YesNo(\"Add script to this Project?\", ScriptName.Trim, TRUE)\n    if (answer.not) then return nil  end\n    ' prompt user for output script name\n    sedFilename = FileDialog.Put(scriptFile.asFilename, \"*.ave\",\"Output Script\")\n    if (sedFilename = Nil) then  ' if user cancelled\n      odbFile.Close\n      ' Msgbox.Error(\"User Cancelled\",\"Aborting\")\n      Return Nil\n    end    \n  end\n\n
+' Prepare save-file-system \n\n  av.run(\"Ordner.Create\",{saveDir.asstring})\n\n  sedDir = saveDir.asstring+\"/\"+odbName\n  av.run(\"Ordner.Create\",{sedDir})\n    \n' make output script file\n\n  sedFileName = sedDir.asFileName\n  sedFileName.mergeFile(scriptFile)\n\n 'sedIdent.set(\"fn\", sedFilename)\n  sedIdent.set(\"fn\", scriptFile)\n\n  sedFile = LineFile.Make(sedFilename,#FILE_PERM_WRITE)\n  \n  if (odbExt = \"avx\") then\n    odbKey    = \"(Script.\"\n    sourceKey = \"SourceCode\"\n  else \n    odbKey    = \"(SEd.\"\n    sourceKey = \"
+Source\"\n  end  \n    \n' set the avx file position to the start of the\n' user selected script and calculate the end position\n\n  scriptPosition = scriptPosition.asNumber\n  \n  odbFile.SetPos(scriptPosition)\n \n  endPosition = (lineCount - scriptPosition) ' ???? zur Sicherheit\n  \n  ' msgbox.info(\"start=\"+scriptPosition.asstring, \"end=\"+endPosition.asstring)\n  \n  theChar = \"\"\n  outLine = \"\"\n  codeFound = false\n  \n \n' read thru the odb-section and retrieve the script code\n\n  for each i in 0..(endPosition - 1)\n    \n
+    ' read a line from the odb-file(apr or avx)\n   \n    inLine = odbFile.ReadElt  ' .Trim \n    ' *********************      \n     \n    ' F I N A L  line of odb-object ***\n    ' determine if this is the END of the script object\n    if ((inLine.Count = 1) and (inLine = \")\")) then   \n      if (outLine.count > 0)then\n        if (outLine.right(1) = qt) then \n          outLine = outline.left(outline.count-1) \n        end   \n        ' msgbox.report(outline, \"Final write\")\n        av.run(\"SEDfile.writeLine\", {sedFi
+le, outLine}) ' sedFile.WriteElt(outLine.Right(outLine.Count - 1))\n        ' ***********************\n      end\n\n      sedFile.SetPos(0)\n      odbFile.Close\n      sedFile.Close         \n      \n      if (scriptDate<>NIL) then \n        sedIdent.set(\"date\", scriptDate)\n        _x = sedIdent\n      end   \n     \n      return sedIdent               \n    end\n  \n    \n    ' search for start of avx script object    \n    if (inLine.Trim.Left(odbKey.count) = odbKey) then\n      inLine = \"\"\n      continue\n    end\n\n    ' ms
+gbox.report(inline, \"line \"+i.asstring)\n  \n    if (inLine.Trim.asTokens(\":\").count > 0) then \n      lineKey = inLine.Trim.asTokens(\":\").get(0)\n      ' ******************\n    else \n      lineKey = NIL\n    end\n\n    ' ???\n    if (skipKeys.FindByValue(lineKey) > -1) then  \n      continue\n    end  \n    \n    ' search for script object's name property\n    \n    if (lineKey = \"Name\") then\n      \n      SedName = inLine.Trim.asTokens(\":\").Get(1).Trim.Substitute(qt,\"\")      \n      ' av.run(\"SEDfile.writeComment\", {sedF
+ile, odbFile, sedName}) \n      sedIdent.set(\"name\", sedName)\n      \n      inLine = \"\"\n      continue\n    end\n\n    if (lineKey = \"CreationDate\") then\n     \n      scriptDate = inLine.Trim.asTokens(\":\").Get(1).Trim.Substitute(qt,\"\")\n      \n      inLine = \"\"\n      continue\n    end\n\n    ' msgbox.report(\"lineKey=\"+lineKey, \"at \"+i.asstring+\"::\"+codeFound.asstring)\n    \n    if (lineKey = sourceKey) then   \n      ' remove from inLine: lineKey + (:)\n      inLine = inLine.Right(inLine.Count - (lineKey.count+1))\n\n    
+  ' remove from inLine: leading (\")\n      inLine = inLine.trim.middle(inLine.indexOf(qt)+1, inLine.Count) \n         \n      codeFound = true\n\n    elseif (codeFound.not) then \n      continue\n    end\n\n    ' msgbox.report(inLine, \"line:\" + (scriptPosition+i).asstring)\n    ' if the avx line contains a newline character\n    ' parse thru and retain the next part for append \n    ' to the next line\n    \n    if (inLine.Contains(\"\\n\")) then\n      \n      skipChar = false\n  \n      for each j in 0..(inLine.Count - 1)\n   
+    \n        if (skipChar = true) then \n          skipChar = false\n          continue  \n        end\n          \n        theChar = inLine.Middle(j,1)\n        nxtLine = inLine.Middle(j,2)\n  \n        if (nxtLine = \"\\n\") then\n          ' write actual outline and start next \n          ' if (outLine.trim.count > 0) then  ' remove empty lines \n            writeFlag = true   ' MsgBox.YesNoCancel (outline, \"writing count=\"+outline.count.asstring, true)\n            if (writeflag=NIL) then  return nil  end\n            
+if (writeflag) then  \n              av.run(\"SED.write\", {sedFile, outLine}) ' sedFile.WriteElt(outLine.Right(outLine.Count - 1))\n            end\n          ' end\n          outLine  = \"\"\n          skipChar = true\n          continue\n        end\n                  \n        ' if the character is a \"literal\" then strip the literal\n        ' marker and use the next character \"literally\".\n            \n        if (theChar = \"\\\") then\n          if ((j + 1) <= (inLine.Count - 1)) then\n            if (inLine.Middle((j +
+ 1),1) = \"\\\") then\n              outLine = outLine + theChar\n            end \n          end\n          \n        else\n          outLine = outLine + theChar\n       \n        end\n          \n      end\n      \n    else  \n    \n      ' read thru the characters in the line \n      ' skipping the linefeed, carriage returns and literal characters \n      ' while building up the line string.  \n      \n      for each k in 0..(inLine.Count - 1)\n\n        theChar = inLine.Middle(k,1)      \n        if ((theChar.asAscii = 10) or 
+(theChar.asAscii = 13)) then\n        \n        elseif (theChar = \"\\\") then\n                  \n          if ((k + 1) <= (inLine.Count - 1)) then\n            if (inLine.Middle((k + 1),1) = \"\\\") then\n              outLine = outLine + theChar\n            end \n          end\n         \n        else\n          outLine = outLine + theChar\n        end      \n        \n      end\n    end\n    \n  end\n\nif (false) then \n  sedFile.SetPos(0)\n  sedFile.Close         \n  odbFile.Close\n  if (scriptDate<>NIL) then \n     sedIdent.set(
+\"date\", scriptDate)\n  end   \n  return sedIdent \nend"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.46
+	Owner:	45
+	X:	399
+	Y:	17
+	W:	836
+	H:	937
+)
+
+(CSMgr.47
+)
+
+(DocAct.48
+	Doc:	45
+)
+
+(SEd.49
+	Name:	"SEDfile.writeComment"
+	CreationDate:	"Dienstag, 19. Januar 2016 17:37:05"
+	GUIName:	"Script"
+	Win:	50
+	CSMgr:	51
+	DocExts:	52
+	ObjectTag:	53
+	Source:	"' Name: SEDfile.writeComment     : Tue Jan 19 17:38:38 2016 : getscripts.apr\n\n      sedFile = self.get(0)\n      odbFile = self.get(1)\n      sedName = self.get(2)\n      \n      ' write the CA DFG ITB ADT usage note.\n      if (false) then  \n        sedFile.WriteElt(\"' ==============================\")  \n        sedFile.WriteElt(\"' odb.extract.script usage note:\")\n        sedFile.WriteElt(\"' ==============================\")  \n        sedFile.WriteElt(\"'\" ++ SedName.Trim + \".ave extracted from:\" ++ odbFile.GetNam
+e.asString.Trim + NL +\n        \"' using the California Department of Fish and Game / Information Technology Branch's\" + NL +\n        \"' 'odb.extract.script' utility.  This utility is meant to encourage the sharing of code and\" + NL +\n        \"' knowledge.  Please, do not extract and use code without due credit to the author(s) and\" + NL +\n        \"' please, do not extract or utilize copyrighted code without the consent of the author(s).\" + NL +\n        NL + \"' odb.extract.script author: Isaac Oshima, ioshim
+a@maphost.dfg.ca.gov; 199907.12\")    \n        sedFile.WriteElt(\"' ==============================\")  \n        sedFile.WriteElt(\"' odb.extract.script usage note:\")\n        sedFile.WriteElt(\"' ==============================\" + NL + NL)  \n      end\n      \n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.50
+	Owner:	49
+	X:	322
+	Y:	384
+	W:	878
+	H:	514
+)
+
+(CSMgr.51
+)
+
+(DocAct.52
+	Doc:	49
+)
+
+(Nil.53
+)
+
+(SEd.54
+	Name:	"SEDfile.writeLine"
+	CreationDate:	"Montag, 18. Januar 2016 16:45:21"
+	GUIName:	"Script"
+	Win:	55
+	CSMgr:	56
+	DocExts:	57
+	ObjectTag:	32
+	Source:	"' Name: SEDfile.writeLine     : Mon Jan 25 09:57:55 2016 : av3_explore.apr\n  \n  sedFile = self.get(0)\n  outLine = self.get(1)\n  \n  ' msgbox.report(outline, \"SED.write\")\n  \n  sedFile.WriteElt(outLine.Right(outLine.Count)) '  - 1))\n"
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.55
+	Owner:	54
+	X:	209
+	Y:	567
+	W:	914
+	H:	317
+)
+
+(CSMgr.56
+)
+
+(DocAct.57
+	Doc:	54
+)
+
+(SEd.58
+	Name:	"SEdit.GlobalVar"
+	CreationDate:	"Mittwoch, 20. Januar 2016 11:45:41"
+	GUIName:	"Script"
+	Win:	59
+	CSMgr:	60
+	DocExts:	61
+	Source:	"' Name: SEdit.GlobalVar     : Wed Aug 29 11:17:10 2012 : tools_sedit.apr\n' Init Global Variable if not existing\n' _global = \"_global\"\n\ndefValue = NIL\n\nparams = NIL\nif (self.is(list)) then \n  params = self\n  standalone=false\nelse\n  ' params = _xSGV\n  standalone=true\nend  \n\nif (params<>NIL) then \n  varName  = params.get(0)\n  if (params.count>1) then  defValue = params.get(1) end\n  _xSGV = params \nelse  \n  varName  = msgbox.input(\"Enter a VariableName\",\"Sedit.GlobalVar\", _global.asstring)\nend\n\nif (varName=NIL)
+ then  return NIL  end\n\n_global = varName\n\n' 1.  TEST- und SET- Function \n\ntestScript = Script.Make(\"x=\"+varName+\" return x\")\n\nif (testScript.HasError) then  \n\n  if (standalone) then \n    if (msgbox.yesno(\"Variable doesnt exist. Initiate the variable now?\",\"Sedit.GlobalVar\",true).not) then  \n    return nil  \n  end\n\n  defValue = msgbox.input(\"Enter Initial Value.\",\"GloVar\",\"Sedit.GlobalVar\")\n  if (defValue.is(string)) then \n    defValue=defValue.quote  \n  else  \n    defValue=defValue.asstring  \n  end\n\n  setS
+cript = Script.Make(varName+\"=\"+defValue+\" X=\"+varName+\"  return x\")\n\n  gloVarValue = setScript.doit(NIL)\n  ' * * * * * * * * * * * * * * *\n  addon = nl+\"value reset !\"\n  end\n\nelse\n\n  gloVarValue = testScript.doit(NIL)\n  ' * * * * * * * * * * * * * * * * * \n  addon = \"\"\nend\n\nif (standalone.NOT) then\n  return   gloVarValue\nend	\n\n\n' 2. VIEW - Function(s) (im standalone-Mode)\n\n' 2.1 \n\nif (glovarValue.is(FileName)) then \n  if (file.exists(glovarValue)) then \n    if (msgbox.yesno(\"View content of file ?\"+nl+gloV
+arValue.asstring.quote,\"Sedit.GlobalVar\",true)) then \n\n      ext = gloVarValue.getExtension\n\n      if (ext=\"dbf\") then \n        oldTable = av.findDoc(\"GlobalVarViewer\")\n        if (oldTable<>NIL) then \n        av.getProject.remove(oldTable)  \n        end\n\n        tstVtab = VTab.Make(gloVarValue,false,false)\n        tstTable = Table.Make(tstVTab)\n        tstTable.getWin.Open\n        tstTable.setName(\"GlobalVarViewer\")\n\n      elseif (ext=\"xml\") then \n        av.run(\"AV.XMLProcessor\", {gloVarValue.asstring})\n 
+       ' -----------------------	\n\n      else \n      system.execute(\"explorer.exe\"++gloVarValue.asstring.quote)\n      ' * * * * * * * *\n      end\n      return NIL \n    end  \n  end  \nend\n\n' 2.2 \n\nif (glovarValue.is(Collection).NOT) then \n  msgbox.report(\"Value of GlobalVar \"+varName.asstring.quote+nl+nl+gloVarValue.asstring+addon, \"Sedit.GlobalVar\")  \n  return NIL \nend\n\n\n' 2.3  Compile viewing options and select one \n\nxmlMode  = NIL\nsortMode = NIL  \nviewModes = {}\n\nif (av.findScript(\"SXML.test\")<>NIL) then \n
+  t = av.run(\"SXML.test\",{glovarValue})\n  if (t <> NIL) then  \n    viewModes.add(\"sxml\")\n  end  \nend\n\n\nif ( glovarValue.is(Dictionary)) then \n  if (av.findScript(\"AV.XMLProcessor\")<>NIL) then    ' original: \"AV.XMLview\" \n    viewModes.add(\"xml\")\n  end\nend\n\nif (av.findScript(\"L\") <> NIL) then\n  viewModes.add(\"original\")\n  viewModes.add(\"sorted alpha\")\n  viewModes.add(\"sorted num\")\nend    \n\nif (viewModes.count > 1) then \n  viewMode = msgbox.listasstring(viewModes, \"Select a mode to view \"+varName.asstring++\"!
+\", \"Sedit.GlobalVar\")\n  if (viewMode=NIL) then  return NIL  end\nelse\n  viewMode = NIL \nend\n\n\n' 2.4 Viewing execution \n\nif (viewMode = \"sxml\") then \n\nn = glovarValue.count\nif ( n > 1) then \n  attDic=dictionary.make(3)\n  attdic.set(\"count\", n.asstring)\n  glovarValue = av.run(\"SXML.Node\",{\"sxmlviewer\", glovarValue, attDic})    \n  end  \n  av.run(\"AV.XMLProcessor\", {gloVarValue })\n  ' ------------------------  \n\nelseif (viewMode = \"xml\") then \n\n  if (glovarValue.count > 1) then \n    klammer = dictionary.make(3)\n
+    klammer.set(\"avdict\", glovarValue)  \n    glovarValue = klammer \n  end  \n\n  av.run(\"L\",{gloVarValue, \"xml of:\"++varName.asstring, \"xml\"})\n\nelseif (viewMode = \"sorted num\") then \n\n  av.run(\"L\",{gloVarValue, \"sorted:\"++varName.asstring})\n\nelseif (viewMode = \"sorted alpha\") then \n\n  av.run(\"L\",{gloVarValue, \"sorted:\"++varName.asstring, TRUE })\n\nelseif (viewMode = \"original\") then \n\n  av.run(\"L\",{gloVarValue, \"original:\"++varName.asstring })\n  ' ----------\nelse\n\nmsgbox.report(varName ++\"is a Collection with\"
+++gloVarValue.count.asstring++\"elements.\",\"Sedit.GlobalVar\")\n\nend\n"
+)
+
+(DocWin.59
+	Owner:	58
+	X:	795
+	Y:	136
+	W:	856
+	H:	874
+)
+
+(CSMgr.60
+)
+
+(DocAct.61
+	Doc:	58
+)
+
+(SEd.62
+	Name:	"Test1"
+	CreationDate:	"Mittwoch, 20. Januar 2016 16:22:38"
+	GUIName:	"Script"
+	Win:	63
+	CSMgr:	64
+	DocExts:	65
+	ObjectTag:	32
+	Source:	"' Name: Test1     : Mon Jan 25 09:58:35 2016 : av3_explore.apr\na  = \"0x01\"\n\nif (a.isNumber) then\n  b = a.asNumber\n  c = b.asstring\n  msgbox.info(\"number = \"+ c , a)\nend\n  "
+	SearchStr:	"\n"
+	FontSize:	1
+)
+
+(DocWin.63
+	Owner:	62
+	X:	11
+	Y:	412
+	W:	675
+	H:	256
+)
+
+(CSMgr.64
+)
+
+(DocAct.65
+	Doc:	62
+)
+
+(LButn.66
+	HelpTopic:	"New_button"
+	Update:	"Doc.NewUpdate"
+	Label:	"&New"
+	Click:	"Script.New"
+)
+
+(LButn.67
+	HelpTopic:	"Open_button"
+	Update:	"Doc.OpenUpdate"
+	Label:	"&Open"
+	Click:	"Doc.Open"
+)
+
+(LButn.68
+	HelpTopic:	"Run_button"
+	Update:	"Script.ActionUpdate"
+	Label:	"&Run"
+	Click:	"Script.Action"
+)
+
+(FN.69
+	Path:	"$USEREXT/gia_sedit.avx"
+)
+
+(NameDict.70
+)
+
+(NameDict.71
+	Obj:	72
+	Obj:	73
+)
+
+(AVDict.72
+	InternalName:	"Table of Contents Defaults Dialog"
+)
+
+(AVDict.73
+	InternalName:	"_Thor_"
+)
+
+(DocGUI.849
+	Name:	"Project"
+	Type:	"Project"
+	Modified:	1
+	MenuBar:	850
+	ButnBar:	910
+	Popups:	924
+	ToolBar:	925
+	Icon:	926
+)
+
+(MenuBar.850
+	Child:	851
+	Child:	862
+	Child:	872
+	Child:	882
+	Child:	887
+)
+
+(PMenu.851
+	InternalName:	"File"
+	Child:	852
+	Child:	853
+	Child:	854
+	Child:	855
+	Child:	856
+	Child:	857
+	Child:	858
+	Child:	859
+	Child:	860
+	Child:	861
+	Label:	"&File"
+)
+
+(Choice.852
+	Help:	"Creates a new project"
+	HelpTopic:	"New_Project"
+	Label:	"&New Project"
+	Click:	"Project.New"
+	Shortcut:	"Keys.Ctrl+N"
+)
+
+(Choice.853
+	Help:	"Opens an existing project"
+	HelpTopic:	"Open_Project"
+	Label:	"&Open Project..."
+	Click:	"Project.Open"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.854
+	Help:	"Closes the project window"
+	HelpTopic:	"Close_Project"
+	Label:	"&Close Project"
+	Click:	"Project.Close"
+	Shortcut:	"Keys.None"
+)
+
+(Space.855
+)
+
+(Choice.856
+	Help:	"Saves the current project"
+	HelpTopic:	"Save_Project"
+	Label:	"&Save Project"
+	Click:	"Project.Save"
+	Shortcut:	"Keys.Ctrl+S"
+)
+
+(Choice.857
+	Help:	"Saves the current project with a new name"
+	HelpTopic:	"Save_Project_As"
+	Label:	"Save Project &As..."
+	Click:	"Project.SaveAs"
+	Shortcut:	"Keys.None"
+)
+
+(Space.858
+)
+
+(Choice.859
+	Help:	"Displays the Extensions dialog"
+	HelpTopic:	"Extensions"
+	Label:	"&Extensions..."
+	Click:	"Appl.GetExtensionWin"
+	Shortcut:	"Keys.None"
+)
+
+(Space.860
+)
+
+(Choice.861
+	Help:	"Exits ArcView"
+	HelpTopic:	"Exit"
+	Label:	"E&xit"
+	Click:	"Project.Exit"
+	Shortcut:	"Keys.None"
+)
+
+(PMenu.862
+	InternalName:	"Project"
+	Child:	863
+	Child:	864
+	Child:	865
+	Child:	866
+	Child:	867
+	Child:	868
+	Child:	869
+	Child:	870
+	Child:	871
+	Label:	"&Project"
+)
+
+(Choice.863
+	Help:	"Displays the dialog box to edit properties of the project"
+	HelpTopic:	"Project_Properties"
+	Label:	"&Properties..."
+	Click:	"Project.Properties"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.864
+	Help:	"Customizes the active project"
+	HelpTopic:	"Customize"
+	Update:	"Project.CustomizeUpdate"
+	Label:	"&Customize..."
+	Click:	"Project.Customize"
+	Shortcut:	"Keys.None"
+)
+
+(Space.865
+)
+
+(Choice.866
+	Help:	"Renames the selected project component"
+	HelpTopic:	"Rename"
+	Update:	"Project.RenameUpdate"
+	Label:	"&Rename 'AV3.ODBToJson'..."
+	Click:	"Project.Rename"
+	Shortcut:	"Keys.Ctrl+R"
+)
+
+(Choice.867
+	Help:	"Deletes the selected component from the project"
+	HelpTopic:	"Delete_Component"
+	Update:	"Project.DeleteUpdate"
+	Label:	"&Delete 'AV3.ODBToJson'..."
+	Click:	"Project.Delete"
+	Shortcut:	"Keys.Del"
+)
+
+(Space.868
+)
+
+(Choice.869
+	Help:	"Adds a table to the project"
+	HelpTopic:	"Add_Table"
+	Update:	"Project.AddTableUpdate"
+	Label:	"&Add Table..."
+	Click:	"Project.AddTable"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.870
+	Help:	"Creates a new project component from an external source"
+	HelpTopic:	"Import"
+	Update:	"Project.ImportUpdate"
+	Label:	"&Import..."
+	Click:	"Project.Import"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.871
+	Help:	"Opens the SQL Connection manager"
+	HelpTopic:	"SQL_Connect"
+	Update:	"Project.HasSQL"
+	Label:	"&SQL Connect..."
+	Click:	"Project.SQLConnect"
+	Shortcut:	"Keys.None"
+)
+
+(PMenu.872
+	InternalName:	"Window"
+	Child:	873
+	Child:	874
+	Child:	875
+	Child:	876
+	Child:	877
+	Child:	878
+	Child:	880
+	Child:	881
+	Label:	"&Window"
+)
+
+(Choice.873
+	Help:	"Arranges windows as non-overlapping tiles"
+	HelpTopic:	"Tile"
+	Label:	"&Tile"
+	Click:	"Project.Tile"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.874
+	Help:	"Arranges windows"
+	HelpTopic:	"Cascade"
+	Label:	"&Cascade"
+	Click:	"Project.Cascade"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.875
+	Help:	"Arranges iconified windows"
+	HelpTopic:	"Arrange_Icons"
+	Label:	"&Arrange Icons"
+	Click:	"Project.ArrangeIcons"
+	Shortcut:	"Keys.None"
+)
+
+(Space.876
+)
+
+(Choice.877
+	Help:	"Shows the symbol window"
+	HelpTopic:	"Show_Symbol_Window"
+	Label:	"Show Symbol Window..."
+	Click:	"Project.ShowHideSymWin"
+	Shortcut:	"Keys.Ctrl+P"
+)
+
+(Space.878
+	ObjectTag:	879
+	Update:	"WindowMenuUpdate"
+)
+
+(AVStr.879
+	S:	"av3_explore.apr ODB.getListSed"
+)
+
+(Choice.880
+	Help:	"Activates av3_explore.apr"
+	Label:	"&1 av3_explore.apr"
+	Click:	"WindowActivate"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.881
+	Help:	"Activates ODB.getListSed"
+	Label:	"&2 ODB.getListSed"
+	Click:	"WindowActivate"
+	Shortcut:	"Keys.None"
+)
+
+(PMenu.882
+	InternalName:	"Help"
+	Child:	883
+	Child:	884
+	Child:	885
+	Child:	886
+	Label:	"&Help"
+)
+
+(Choice.883
+	Help:	"Displays the dialog for browsing and searching ArcView's help system"
+	HelpTopic:	"Help_on_Help_Topics"
+	Label:	"Help &Topics..."
+	Click:	"Project.HelpTopics"
+	Shortcut:	"Keys.None"
+)
+
+(Choice.884
+	Help:	"Provides instructions for how to obtain help from ArcView"
+	HelpTopic:	"Help_on_How_to_Get_Help"
+	Label:	"&How to Get Help..."
+	Click:	"Project.HelpHelp"
+	Shortcut:	"Keys.None"
+)
+
+(Space.885
+)
+
+(Choice.886
+	Help:	"Provides information about ArcView"
+	HelpTopic:	"About"
+	Label:	"&About ArcView..."
+	Click:	"Project.About"
+	Shortcut:	"Keys.None"
+)
+
+(PMenu.887
+	Label:	"ScrTools"
+)
+
+(ButnBar.910
+	Update:	"Project.UpdateButtons"
+	Child:	911
+	Child:	913
+	Child:	914
+	Child:	916
+	Child:	917
+	Child:	921
+	Child:	922
+)
+
+(Butn.911
+	Help:	"Save Project//Saves the current project"
+	HelpTopic:	"Save_Project"
+	Icon:	912
+	Click:	"Project.Save"
+)
+
+(AVIcon.912
+	Name:	"Save"
+	Res:	"Icons.Save"
+
+)
+
+(Space.913
+)
+
+(Butn.914
+	Help:	"Help//Gets help about the next button, tool, or menu choice you click"
+	HelpTopic:	"Help_button"
+	Icon:	915
+	Click:	"Help.Tool"
+)
+
+(AVIcon.915
+	Name:	"HelpTool"
+	Res:	"Icons.HelpTool"
+
+)
+
+(Space.916
+)
+
+(Butn.917
+	Icon:	918
+	Click:	"SED.Get"
+)
+
+(AVIcon.918
+	Name:	"Find"
+	Res:	"Icons.Find"
+
+)
+
+(Space.921
+)
+
+(Butn.922
+	Icon:	923
+	Click:	"SED.Get"
+)
+
+(AVIcon.923
+	Name:	"Find"
+	Res:	"Icons.Find"
+
+)
+
+(PopupSet.924
+)
+
+(ToolBar.925
+)
+
+(AVIcon.926
+	Name:	"Icon"
+	Res:	"Project.Icon"
+
+)
+
+(FN.945
+	Path:	"$HOME"
+)
+
+(AVStr.946
+	S:	"View"
+)
+
+(AVStr.947
+	S:	"Table"
+)
+
+(AVStr.948
+	S:	"Chart"
+)
+
+(AVStr.949
+	S:	"Layout"
+)
+
+(AVStr.950
+	S:	"Script"
+)
+
+(AVStr.951
+	S:	"Project"
+)
+
+(AVStr.952
+	S:	"Appl"
+)
+
