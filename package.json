@@ -1,7 +1,7 @@
 {
   "name": "av3_json",
   "version": "0.0.1",
-  "description": "An example module to illustrate the usage of a package.json",
+  "description": "Developing a module to explore av3 projects, extensions ",
   "author": "WGP <pagenkopf@iimaps.de>",
   "contributors": [
     {
