@@ -11,9 +11,9 @@ var removeDeps = function(av3Json, params) {
 var file   = "samples/av3_aveexport.apr";
 var params = {file: file};
 
-if (0) {	// create a json-translation of file 
+if (1) {	// create a json-translation of file 
 	params["main"] = avjs.save;	
-	params["file"] = "samples/gia_base.avx";	
+	// params["file"] = "samples/gia_base.avx";	
 }
 
 if (0) {	// extract av3.scripts-files(*.ave) into subdirectories  
@@ -25,7 +25,7 @@ if (0) {	// extract av3.scripts-files(*.ave) into subdirectories
 	// params["show"] = true; 	
 }
 
-if (1) {	// 
+if (0) {	// 
 	params["main"] = removeDeps; 
 	// params["file"] = "samples/gia_base.avx";	
 	params["suffix"] = "_x" ; 

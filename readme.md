@@ -6,7 +6,7 @@ Mainly used to reactivate gis knowhow "hidden" in Arcview projects.
 - legends created to map themes
 - scripts used to process data   
 
-## Functions running within av3
+## Functions running av3
 The project **av3_explore.apr** contains two basic tools applicable to arbitrary further av3-objects (-.apr , -.avx):
 
 1. Using the tool "odb2Json" (related to button "") av3-objects are translated into avjs-syntax (json-documents), z.B.:
@@ -22,8 +22,8 @@ The project **av3_explore.apr** contains two basic tools applicable to arbitrary
     - to manipulate avjs 
 2. avjs_main.js:    set of tasks (??? convert to gulp-file ???)  
 
-## Integration with gulp
+### Integration with gulp
 tbd
 
-## Desktop-Interface with nwjs
+### User-Interface with nwjs
 tbd
