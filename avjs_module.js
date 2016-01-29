@@ -548,10 +548,11 @@ var removeDependencies =  function(av3Json, params) { //
 	return av3Json;
 }
 
-var outFnMake = function(params) {
+// OUTPUT functions 
+var outFnMake = function(params) {  // tool 
 
-	var suffix = params["suffix"];
-	if (!suffix) suffix = "";
+	var suffix = params["suffix"];	// optional suffix to basename
+	if (!suffix) suffix = "";		 
 
 	var	file = params["file"],
 		ext  = params["ext"],
@@ -559,16 +560,17 @@ var outFnMake = function(params) {
 		base   = params["base"];
 
 	if (!ext) 	 				 ext = path.extname(file);
-	else if (ext.charAt(0)!=".") ext = "." + ext; 
+	else if (ext.charAt(0)!=".") ext = "." + ext; 	// make it fit to output of path.extname
 
-	if (!base) 	 base 	= path.basename(file, ext);  // console.log("fn-components", dir, base, ext); 
+	if (!base) 	 base 	= path.basename(file, ext); 
 	if (!folder) folder = path.dirname(file);
 
-	if (!fs.existsSync(folder)){
+	if (!fs.existsSync(folder)){	// verify existence of output folder
 	    fs.mkdirSync(folder);
-	}
+	} 	// console.log("fn-components", folder, base, ext); 
 
 	var  fn = folder + "/" + base + suffix + ext; 
+
 	return fn; 
 } 
 
