@@ -548,19 +548,52 @@ var removeDependencies =  function(av3Json, params) { //
 	return av3Json;
 }
 
+var outFnMake = function(params) {
+
+	var suffix = params["suffix"];
+	if (!suffix) suffix = "";
+
+	var	file = params["file"],
+		ext  = params["ext"],
+		folder = params["folder"],
+		base   = params["base"];
+
+	if (!ext) 	 				 ext = path.extname(file);
+	else if (ext.charAt(0)!=".") ext = "." + ext; 
+
+	if (!base) 	 base 	= path.basename(file, ext);  // console.log("fn-components", dir, base, ext); 
+	if (!folder) folder = path.dirname(file);
+
+	if (!fs.existsSync(folder)){
+	    fs.mkdirSync(folder);
+	}
+
+	var  fn = folder + "/" + base + suffix + ext; 
+	return fn; 
+} 
+
 var saveScripts = function(av3Json, params) { // folder, scriptext) {
-	// Create folder with uniq files for every ave-SEd
+	// save into a folder with uniq files for every ave-SEd
+
+	// 1. 
 	if (!params) params = {}; 
 	var scripts = {}, src, fn, objkey;
-	var srcExt = params["extension"],
+	var file      = params["file"],
 		scriptext = params["scriptext"],
-		folder = params["folder"];
+		folder    = params["folder"];
 
-	if (!srcExt) {
-		console.log("BREAK. Check params:", params) ; 
-		return; 
-	}	 
-	if (srcExt=="apr") {
+	if (!scriptext) scriptext = "ave"; 
+	params["ext"] = scriptext;
+
+	var srcext  = path.extname(file),
+		srcbase = path.basename(file, srcext),
+		srcfolder = path.dirname(file);
+
+	if (!folder) {
+		params["folder"] = srcfolder+"/"+srcbase;
+	}	
+
+	if (srcext.indexOf("apr") >= 0) {
 		objkey  = "SEd";
 		propkey = "Source"
 	} else {
@@ -568,40 +601,32 @@ var saveScripts = function(av3Json, params) { // folder, scriptext) {
 		propkey = "SourceCode"
 	} // console.log("params", params); 
 
-	// 1. Create save-folder
-
-	if (!folder) folder = "aves";
-
-	if (!fs.existsSync(folder)){
-	    fs.mkdirSync(folder);
-	}
-	if (!scriptext) scriptext = "ave"; 
-
-
 	// 2. Extract script-sources
-
-	function unescape(src) {	
-		// if src was "double escaped" before f.i. 
+	function unescape(srccode) {	
+		// if srccode was "double escaped" before f.i. 
 		// a)  in apr-doc and 
 		// b)  by JSON.stringify during retransformation   	
 		var nline = String.fromCharCode(10);  	// better???: String.fromCharCode(13,10)
-		src = src.replace(/\\"/g, '"');			 
-		src = src.replace(/\\n/g, nline);	  
-		src = src.replace(/\\\\/g, "\\"); 		// reduce  \\  to  \ 		
-		return src;
+		srccode = srccode.replace(/\\"/g, '"');			 
+		srccode = srccode.replace(/\\n/g, nline);	  
+		srccode = srccode.replace(/\\\\/g, "\\"); 		// reduce  \\  to  \ 		
+		return srccode;
 	}	
 
 	var seds = queryObjects(av3Json, objkey); // console.dir(seds); 
 	for(var k in seds)  { 
-		src = seds[k][propkey];	// combine into one line ?? 	
-		src = unescape(src); 
-		scripts[seds[k]["Name"]] = src;    // return; 
+		srccode = seds[k][propkey];	// combine into one line ?? 	
+		srccode = unescape(srccode); 
+		scripts[seds[k]["Name"]] = srccode;    // return; 
 	}	// console.dir(seds); 
 
-	// 3. write sources into separate files
-
+	// 3. WriteSave sources into separate files
+	var fn; 
 	for (var name in scripts)  {	// console.log(name, scripts[name].length);
-		fn = folder + "/" + name + '.' + scriptext;  console.log(name, fn);
+		params["base"] = name;
+		// fn = folder + "/" + name + '.' + scriptext;  
+		fn = outFnMake(params) ; //  console.log(name, fn);
+
 		fs.writeFile(fn, scripts[name], function (err) {
 			if (err) return console.log(err); // BREAK saving if error during save-cycle
 		});
@@ -682,15 +707,8 @@ var av3js_export = function(av3Json, params) { // console.log("LOG.av3js_export"
 	}   //console.log("FINISH odb-Output"); 	
 
 	// C. save the new  
-	var suffix = params["suffix"];
-	if (!suffix) suffix = "x";
 
-	var	file = params["file"],
-		ext  = path.extname(file),
-		dir  = path.dirname(file),
-		base = path.basename(file, ext);  // console.log("fn-components", dir, base, ext); 
-	var  fn = base + suffix + ext; 
-	if (dir) fn = dir + "/" + fn; 	
+	var fn = outFnMake(params) ;
 	fs.writeFile(fn, odbOut, function (err) {
 		if (err) return console.log(err); 
 		console.log("transformed and saved",file,"to",fn); 
