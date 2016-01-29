@@ -15,12 +15,25 @@ The project **av3_explore.apr** contains two basic tools applicable to arbitrary
  
 2. The Tool "export-ave" exports all scripts defined within av3-objects as [scriptname].ave - files into an exportdirectory [objectname] 
 
-## Functions running nodejs
+## Functions running in "nodejs"
 
+Requires preinstallation of node and npm. 
+
+Some additional node-modules (fs, jsonfile, ...) are declared in packages.json and can be loaded with 
+    npm install.  
+
+Running the tool with 
+    node avjs_main.js 
+Debugging with 
+    node-debug avjs-main.js
+
+### project-code
 1. avjs_module.js:  library of methods 
     - to translate between av3-syntax and avjs-syntax (both directions) .
     - to manipulate avjs 
 2. avjs_main.js:    set of tasks (??? convert to gulp-file ???)  
+3. samples-directory containing test-data
+
 
 ### Integration with gulp
 tbd
