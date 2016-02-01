@@ -713,7 +713,7 @@ var av3js_export = function(av3Json, params) { // console.log("LOG.av3js_export"
 	var fn = outFnMake(params) ;
 	fs.writeFile(fn, odbOut, function (err) {
 		if (err) return console.log(err); 
-		console.log("transformed and saved",file,"to",fn); 
+		console.log("transformed and saved to",fn); 
 	}); 
 }
 

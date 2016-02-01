@@ -2,6 +2,18 @@
   "name": "av3_json",
   "version": "0.0.1",
   "description": "Developing a module to explore av3 projects, extensions ",
+  "keywords": [
+    "arcview 3",
+    "json",
+    "scripts"
+  ],
+  "bin": {
+    "avjs": "avjs_main.js"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "preferGlobal": true,
   "author": "WGP <pagenkopf@iimaps.de>",
   "contributors": [
     {
@@ -9,26 +21,21 @@
       "email": "anja@wolkenbilder.de"
     }
   ],
+  "private": true,
+  "dependencies": {
+    "jsonfile": "^2.2.3",
+    "line-reader": "^0.3.0",
+    "minimist": "^1.2.0"
+  },
+  "devDependencies": {},
   "scripts": {
     "start": "node avjs_main.js"
   },
   "main": "avjs_main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iimaps/"
+    "url": "https://github.com/oneputin/avjs.git"
   },
-  "keywords": [
-    "arcview 3",
-    "json",
-    "scripts"
-  ],
-  "dependencies": {
-    "jsonfile": "^2.2.3",
-    "line-reader": "^0.3.0"
-  },
-  "devDependencies": {},
-  "preferGlobal": true,
-  "private": true,
   "analyze": true,
   "license": "MIT"
 }
